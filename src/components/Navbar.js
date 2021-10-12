@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from 'react-router-dom';
 
 const Navbar = (props) => {
+    console.log(props.useActorsData);
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <Link className="navbar-brand" to="/">Foxes71</Link>
@@ -15,7 +16,7 @@ const Navbar = (props) => {
                         <Link className="nav-link" to="/">Home</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link " to="/shop">Shop</Link>
+                        <Link className="nav-link " to="/shop" onClick={props.useActorsData}>Shop</Link>
                     </li>
                 </ul>
                 <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
