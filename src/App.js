@@ -4,17 +4,15 @@ import { Switch, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Shop from './views/Shop';
 import Home from './views/Home';
+import Cart from './views/Cart';
 import axios from 'axios';
 
 const App = (props) => {
   /* State hook -> declaring the state variable students */
   // const [<state_variable_name>, <setState function name>] = useState(<initial_value>);
-  const [students, setStudents] = useState(['Chad', 'Ronald', 'Christian', 'Claudia', 'Joo Yeon', 'Anne', 'Andre', 'Sierra']);
+  const [students, setStudents] = useState(['Elaine', 'Chad', 'Ronald', 'Christian', 'Claudia', 'Joo Yeon', 'Anne', 'Andre', 'Sierra']);
 
-  // declare a state hook for my actors
-  const [actors, setActors] = useState();
-
-  /* Processing/background data section */
+  /* Processing/background data section - for ACTORS */
 
   // api call step
   const getActors = async () => {
@@ -28,12 +26,23 @@ const App = (props) => {
   }
 
   // using api call data step
-  const useActorsData = async () => {
+  // remember: don't start a normal function's name with use____ -> react will assume it is a custom hook even if it is not
+  const gotActorsData = async () => {
     let data = await getActors();
     setActors(data);
-    //console.log(actors);
   }
 
+  // declare a state hook for my actors
+  const [actors, setActors] = useState(() => gotActorsData());
+
+  /* Cart stuff! */
+  const [cart, setCart] = useState({
+    total: 0,
+    size: 0,
+    items: {}
+  });
+
+  
   /* 
   return -> actually has the HTML/pseudo-HTML/pseudo-JavaScript/React code called JSX
   Each react component - be it functional or class based - is intended to be a single HTML element
@@ -42,12 +51,13 @@ const App = (props) => {
   return (
     <div className="App">
       {/* Navbar custom component being placed in the App component's html */}
-      <Navbar useActorsData={useActorsData} />
+      <Navbar cart={cart}/>
 
       {/* Router being set up to swap between Home and Shop components */}
       <Switch>
         <Route exact path='/' render={() => <Home title={'Foxes71 | Home'} students={students} setStudents={setStudents} newprop={'Hi Shoha'} />} />
-        <Route path='/shop' render={() => <Shop title={'Foxes71 | Shop'} actors={actors} />} />
+        <Route path='/shop' render={() => <Shop title={'Foxes71 | Shop'} actors={actors} cart={cart} setCart={setCart}/>} />
+        <Route path='/cart' render={() => <Cart cart={cart} setCart={setCart} />} />
       </Switch>
     </div>
   );
