@@ -1,9 +1,22 @@
 import React from 'react';
-import '../static/cartTempStyle.css'
+import '../static/cartTempStyle.css';
+import { set, ref } from 'firebase/database';
+import { useDatabase, useUser } from 'reactfire';
 
 const Cart = (props) => {
+    const { userStatus, data: user } = useUser();
+    const db = useDatabase();
+
     // remove all button - remove everything from the cart - aka putting the cart back in its original state
     const clearCart = () => {
+        if (user) {
+            let uid = user.uid;
+            set(ref(db, `carts/${uid}`), {
+                total: 0,
+                size: 0,
+                items: {}
+            });
+        }
         props.setCart({
             total: 0,
             size: 0,
@@ -25,6 +38,11 @@ const Cart = (props) => {
         let floatPrice = parseFloat(act.data.hiringprice.replaceAll(',', '').replace('$', ''));
         mutatingCart.total = mutatingCart.total + floatPrice;
 
+        if (user) {
+            let uid = user.uid;
+            set(ref(db, `carts/${uid}`), mutatingCart);
+        }
+
         props.setCart(mutatingCart); // mutate state through setState
         console.log(props.cart);
     }
@@ -43,6 +61,11 @@ const Cart = (props) => {
         let floatPrice = parseFloat(act.data.hiringprice.replaceAll(',', '').replace('$', ''));
         mutatingCart.total = mutatingCart.total - floatPrice;
 
+        if (user) {
+            let uid = user.uid;
+            set(ref(db, `carts/${uid}`), mutatingCart);
+        }
+
         props.setCart(mutatingCart); // mutate state through setState
         console.log(props.cart); // may be a step behind -> check components bc console.log can resolve before .setCart()
     }
@@ -56,10 +79,15 @@ const Cart = (props) => {
 
         // decrease the total by total cost of all of that item being removed
         let floatPrice = parseFloat(act.data.hiringprice.replaceAll(',', '').replace('$', ''));
-        mutatingCart.total = mutatingCart.total - floatPrice*act.quantity;
+        mutatingCart.total = mutatingCart.total - floatPrice * act.quantity;
 
         // remove all of that item from the cart
         delete mutatingCart.items[act.data.id];
+
+        if (user) {
+            let uid = user.uid;
+            set(ref(db, `carts/${uid}`), mutatingCart);
+        }
 
         props.setCart(mutatingCart); // mutate state through setState
     }

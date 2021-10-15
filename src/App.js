@@ -6,8 +6,17 @@ import Shop from './views/Shop';
 import Home from './views/Home';
 import Cart from './views/Cart';
 import axios from 'axios';
+import { getAuth } from 'firebase/auth';
+import { getDatabase } from 'firebase/database';
+import { useFirebaseApp, AuthProvider, DatabaseProvider, useDatabase } from 'reactfire';
 
 const App = (props) => {
+  // Reactfire setup stuff
+  const app = useFirebaseApp();
+
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
   /* State hook -> declaring the state variable students */
   // const [<state_variable_name>, <setState function name>] = useState(<initial_value>);
   const [students, setStudents] = useState(['Elaine', 'Chad', 'Ronald', 'Christian', 'Claudia', 'Joo Yeon', 'Anne', 'Andre', 'Sierra']);
@@ -42,24 +51,27 @@ const App = (props) => {
     items: {}
   });
 
-  
   /* 
   return -> actually has the HTML/pseudo-HTML/pseudo-JavaScript/React code called JSX
   Each react component - be it functional or class based - is intended to be a single HTML element
   Inside of the render's return we are mostly writing HTML -> if you want to use JavaScript, you put it in curly brackets
   */
   return (
-    <div className="App">
-      {/* Navbar custom component being placed in the App component's html */}
-      <Navbar cart={cart}/>
+    <AuthProvider sdk={auth}>
+      <DatabaseProvider sdk={db}>
+        <div className="App">
+          {/* Navbar custom component being placed in the App component's html */}
+          <Navbar cart={cart} setCart={setCart} />
 
-      {/* Router being set up to swap between Home and Shop components */}
-      <Switch>
-        <Route exact path='/' render={() => <Home title={'Foxes71 | Home'} students={students} setStudents={setStudents} newprop={'Hi Shoha'} />} />
-        <Route path='/shop' render={() => <Shop title={'Foxes71 | Shop'} actors={actors} cart={cart} setCart={setCart}/>} />
-        <Route path='/cart' render={() => <Cart cart={cart} setCart={setCart} />} />
-      </Switch>
-    </div>
+          {/* Router being set up to swap between Home and Shop components */}
+          <Switch>
+            <Route exact path='/' render={() => <Home title={'Foxes71 | Home'} students={students} setStudents={setStudents} newprop={'Hi Shoha'} />} />
+            <Route path='/shop' render={() => <Shop title={'Foxes71 | Shop'} actors={actors} cart={cart} setCart={setCart} />} />
+            <Route path='/cart' render={() => <Cart cart={cart} setCart={setCart} />} />
+          </Switch>
+        </div>
+      </DatabaseProvider>
+    </AuthProvider>
   );
 };
 
