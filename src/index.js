@@ -4,7 +4,7 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { FirebaseAppProvider } from 'reactfire';
-import App from './App';
+import ProviderLayer from './ProviderLayer';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -23,7 +23,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Router>
       <FirebaseAppProvider firebaseConfig={firebaseConfig}>
-        <App />
+        <ProviderLayer />
       </FirebaseAppProvider>
     </Router>
   </React.StrictMode>,

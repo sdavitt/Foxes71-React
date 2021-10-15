@@ -6,16 +6,15 @@ import Shop from './views/Shop';
 import Home from './views/Home';
 import Cart from './views/Cart';
 import axios from 'axios';
-import { getAuth } from 'firebase/auth';
-import { getDatabase } from 'firebase/database';
-import { useFirebaseApp, AuthProvider, DatabaseProvider, useDatabase } from 'reactfire';
+import { get, child, ref } from 'firebase/database';
+import { useDatabase, useUser } from 'reactfire';
+import { useEffect } from 'react/cjs/react.development';
 
 const App = (props) => {
   // Reactfire setup stuff
-  const app = useFirebaseApp();
-
-  const auth = getAuth(app);
-  const db = getDatabase(app);
+  const db = useDatabase();
+  const { userStatus, data: user } = useUser();
+  console.log(db);
 
   /* State hook -> declaring the state variable students */
   // const [<state_variable_name>, <setState function name>] = useState(<initial_value>);
@@ -45,11 +44,48 @@ const App = (props) => {
   const [actors, setActors] = useState(() => gotActorsData());
 
   /* Cart stuff! */
+
+  // return value of check user cart will be initial value of state cart
+  const checkUserCart = () => {
+    console.log(user);
+    if (user) { // if there's a user, do some stuff to make state cart the same as db cart
+      let uid = user.uid;
+      get(child(ref(db), `carts/${uid}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          let c = snapshot.val();
+          if (c.items) {
+            return c
+          }
+        }
+      }).catch((error) => {
+        console.error(error);
+      });
+    }
+    return
+  }
+
   const [cart, setCart] = useState({
     total: 0,
     size: 0,
     items: {}
   });
+
+  useEffect(() => {
+    console.log(user);
+    if (user) { // if there's a user, do some stuff to make state cart the same as db cart
+      let uid = user.uid;
+      get(child(ref(db), `carts/${uid}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          let c = snapshot.val();
+          if (c.items) {
+            setCart(c);
+          }
+        }
+      }).catch((error) => {
+        console.error(error);
+      });
+    }
+  }, [user])
 
   /* 
   return -> actually has the HTML/pseudo-HTML/pseudo-JavaScript/React code called JSX
@@ -57,21 +93,17 @@ const App = (props) => {
   Inside of the render's return we are mostly writing HTML -> if you want to use JavaScript, you put it in curly brackets
   */
   return (
-    <AuthProvider sdk={auth}>
-      <DatabaseProvider sdk={db}>
-        <div className="App">
-          {/* Navbar custom component being placed in the App component's html */}
-          <Navbar cart={cart} setCart={setCart} />
+    <div className="App">
+      {/* Navbar custom component being placed in the App component's html */}
+      <Navbar cart={cart} setCart={setCart} />
 
-          {/* Router being set up to swap between Home and Shop components */}
-          <Switch>
-            <Route exact path='/' render={() => <Home title={'Foxes71 | Home'} students={students} setStudents={setStudents} newprop={'Hi Shoha'} />} />
-            <Route path='/shop' render={() => <Shop title={'Foxes71 | Shop'} actors={actors} cart={cart} setCart={setCart} />} />
-            <Route path='/cart' render={() => <Cart cart={cart} setCart={setCart} />} />
-          </Switch>
-        </div>
-      </DatabaseProvider>
-    </AuthProvider>
+      {/* Router being set up to swap between Home and Shop components */}
+      <Switch>
+        <Route exact path='/' render={() => <Home title={'Foxes71 | Home'} students={students} setStudents={setStudents} newprop={'Hi Shoha'} />} />
+        <Route path='/shop' render={() => <Shop title={'Foxes71 | Shop'} actors={actors} cart={cart} setCart={setCart} />} />
+        <Route path='/cart' render={() => <Cart cart={cart} setCart={setCart} />} />
+      </Switch>
+    </div>
   );
 };
 

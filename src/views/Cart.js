@@ -104,7 +104,7 @@ const Cart = (props) => {
                     {Object.values(props.cart.items).map(a => {
                         console.log(a);
                         return (
-                            <div className="d-flex flex-row justify-content-between align-items-center p-2 bg-white mt-4 px-3 rounded">
+                            <div key={a.data.id} className="d-flex flex-row justify-content-between align-items-center p-2 bg-white mt-4 px-3 rounded">
                                 <div className="mr-1"><img className="rounded" alt={a.data.first_name} src={a.data.image} width="70" /></div>
                                 <div className="d-flex flex-column align-items-center product-details"><span className="font-weight-bold">{`${a.data.first_name} ${a.data.last_name}`}</span>
                                     <div className="d-flex flex-row product-desc">
