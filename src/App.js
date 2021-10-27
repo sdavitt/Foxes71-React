@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Shop from './views/Shop';
 import Home from './views/Home';
 import Cart from './views/Cart';
+import Checkout from './views/Checkout';
 import axios from 'axios';
 import { get, child, ref } from 'firebase/database';
 import { useDatabase, useUser } from 'reactfire';
@@ -102,6 +103,7 @@ const App = (props) => {
         <Route exact path='/' render={() => <Home title={'Foxes71 | Home'} students={students} setStudents={setStudents} newprop={'Hi Shoha'} />} />
         <Route path='/shop' render={() => <Shop title={'Foxes71 | Shop'} actors={actors} cart={cart} setCart={setCart} />} />
         <Route path='/cart' render={() => <Cart cart={cart} setCart={setCart} />} />
+        <Route path='/checkout' render={() => <Checkout cart={cart} setCart={setCart} />} />
       </Switch>
     </div>
   );

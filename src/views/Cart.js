@@ -2,6 +2,7 @@ import React from 'react';
 import '../static/cartTempStyle.css';
 import { set, ref } from 'firebase/database';
 import { useDatabase, useUser } from 'reactfire';
+import { Link } from 'react-router-dom';
 
 const Cart = (props) => {
     const { userStatus, data: user } = useUser();
@@ -132,7 +133,7 @@ const Cart = (props) => {
                         </div>
                         <div className="d-flex align-items-center"><button className="btn btn-sm btn-danger" onClick={clearCart}>Remove All</button></div>
                     </div>
-                    <div className="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"><button className="btn btn-warning btn-block btn-lg ml-2 pay-button" type="button">Proceed to Pay</button></div>
+                    <div className="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"><Link to='/checkout' className="btn btn-warning btn-block btn-lg ml-2 pay-button" type="button">Proceed to Pay</Link></div>
                 </div>
             </div>
         </div>
